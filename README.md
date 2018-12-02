@@ -1,60 +1,111 @@
-> ![MikroE](http://www.mikroe.com/img/designs/beta/logo_small.png)
-> #[Magneto click](http://www.mikroe.com/click/magneto/)#
-> ##By [MikroElektronika](http://www.mikroe.com)
+![MikroE](http://www.mikroe.com/img/designs/beta/logo_small.png)
+
 ---
 
-## Installation
-Package manager required to install the package to your IDE.  
+# Magneto Click
 
-###Example
-```
-#include "magneto.h"
+- **CIC Prefix**  : MAGNETO
+- **Author**      : Nenad Filipovic
+- **Verison**     : 1.0.0
+- **Date**        : Oct 2018.
 
-sbit MAGNETO_CS at GPIOD_ODR.B13;
+---
 
-// Initialize all system peripherals
-void system_init()
+### Software Support
+
+We provide a library for the Magneto Click on our [LibStock](https://libstock.mikroe.com/projects/view/1681/magneto-click) 
+page, as well as a demo application (example), developed using MikroElektronika 
+[compilers](http://shop.mikroe.com/compilers). The demo can run on all the main 
+MikroElektronika [development boards](http://shop.mikroe.com/development-boards).
+
+**Library Description**
+
+The library covers all the necessary functions to control Magneto Click board. 
+Library performs the communication with the device via SPI driver by writting to registers and by reading from registers.
+Library measures 14-bit value from register and calculate the absolute position of the magnet’s rotation angle degrees [ ° ].
+
+Key functions :
+
+- ``` uint16_t magneto_readData( uint16_t addressCommand ) ``` - Generic read - 16-bit command  function
+- ``` void magneto_writeData( uint16_t addressCommand, uint16_t writeData ) ``` - Generic write function - 16-bit command & write data
+- ``` float magneto_calculateAngle() ``` - Calculate angle function
+
+**Examples Description**
+
+The application is composed of three sections :
+
+- System Initialization - Initializes SPI, GPIO and LOG structures, set CS and PWM pins as output.
+- Application Initialization - Initialization driver enable's - SPI,
+     check state register and start write log.
+- Application Task - (code snippet) This is a example which demonstrates the use of Magneto Click board.
+     Magneto Click communicates with register via SPI by write and read from register
+     and calculate float angle value.
+     Results are being sent to the Usart Terminal where you can track their changes.
+     All data logs on usb uart for aproximetly every 3 sec.
+
+
+```.c
+
+void applicationTask()
 {
-    DisableInterrupts();
+    angleValue = magneto_calculateAngle();
 
-    GPIO_Digital_Output( &GPIOD_BASE, _GPIO_PINMASK_13 );
-    
-    UART1_Init( 57600 );
+    FloatToStr( angleValue, logText );
+    mikrobus_logWrite( "    Angle : ", _LOG_TEXT );
+    mikrobus_logWrite( logText, _LOG_TEXT );
+    mikrobus_logWrite( "°", _LOG_LINE );
+    mikrobus_logWrite( "-------------------------", _LOG_LINE );
 
-    /* SPI Init - NOTE* Magneto samples bits on the second clock transition */
-    SPI3_Init_Advanced( _SPI_FPCLK_DIV16,
-                        _SPI_MASTER | _SPI_8_BIT | _SPI_CLK_IDLE_LOW |
-                        _SPI_SECOND_CLK_EDGE_TRANSITION | _SPI_MSB_FIRST |
-                        _SPI_SS_DISABLE | _SPI_SSM_ENABLE | _SPI_SSI_1,
-                        &_GPIO_MODULE_SPI3_PC10_11_12 );
-    
-    // Initialize magneto and check for success or failure
-    if( magneto_init( MAGNETO_SPI, 0, 1 ) )
-        return;
+    Delay_1sec();
+    Delay_1sec();
+    Delay_1sec();
 }
 
-
-void main()
-{
-    float *read_angle;
-
-    system_init();
-
-    while( 1 )
-    {
-        read_angle = magneto_get_angles( 1 );
-        
-        if( magneto_error() )
-        {
-            magneto_error_t *error = magneto_get_errors( 1 );
-            
-            if( *error == MAGNETO_WRONG_NUM_OF_CLOCKS )
-                UART_Write_Text( "Too fast of SPI clock\r\n" );
-        } else {
-            display_angle( *read_angle );
-        }
-
-        ...
-    }
-}
 ```
+
+
+
+The full application code, and ready to use projects can be found on our 
+[LibStock](https://libstock.mikroe.com/projects/view/1681/magneto-click) page.
+
+Other mikroE Libraries used in the example:
+
+- SPI
+- UART
+- Conversions
+
+
+**Additional notes and informations**
+
+Depending on the development board you are using, you may need 
+[USB UART click](http://shop.mikroe.com/usb-uart-click), 
+[USB UART 2 Click](http://shop.mikroe.com/usb-uart-2-click) or 
+[RS232 Click](http://shop.mikroe.com/rs232-click) to connect to your PC, for 
+development systems with no UART to USB interface available on the board. The 
+terminal available in all Mikroelektronika 
+[compilers](http://shop.mikroe.com/compilers), or any other terminal application 
+of your choice, can be used to read the message.
+
+---
+### Architectures Supported
+
+#### mikroC
+
+| STM | KIN | CEC | MSP | TIVA | PIC | PIC32 | DSPIC | AVR | FT90x |
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| x | x | x | x | x | x | x | x | x | x |
+
+#### mikroBasic
+
+| STM | KIN | CEC | MSP | TIVA | PIC | PIC32 | DSPIC | AVR | FT90x |
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| x | x | x | x | x | x | x | x | x | x |
+
+#### mikroPascal
+
+| STM | KIN | CEC | MSP | TIVA | PIC | PIC32 | DSPIC | AVR | FT90x |
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| x | x | x | x | x | x | x | x | x | x |
+
+---
+---
